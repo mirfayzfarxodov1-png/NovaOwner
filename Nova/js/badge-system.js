@@ -1,5 +1,6 @@
 // ============================================
 // NOVA - BADGE SYSTEM (Galichka tizimi)
+// O'NG TOMONDA (RIGHT PANEL) JOYLASHGAN
 // Qizil doira ichida NOVA animatsiyali galichka
 // Yangi foydalanuvchilarga 1 oy tekin, keyin 1$/oy
 // ============================================
@@ -7,7 +8,7 @@
 (function() {
     "use strict";
     
-    console.log("🎖️ NOVA Galichka tizimi ishga tushdi");
+    console.log("🎖️ NOVA Galichka tizimi ishga tushdi (O'ng tomonda)");
     
     // ===== KONFIGURATSIYA =====
     const CONFIG = {
@@ -32,10 +33,8 @@
     function loadBadgeState() {
         const hasBadge = localStorage.getItem(CONFIG.STORAGE_KEYS.HAS_BADGE) === 'true';
         const expiry = localStorage.getItem(CONFIG.STORAGE_KEYS.BADGE_EXPIRY);
-        const freeReceived = localStorage.getItem(CONFIG.STORAGE_KEYS.FREE_BADGE_RECEIVED) === 'true';
         
         badgeState.hasBadge = hasBadge;
-        badgeState.isFreeTrial = freeReceived && !hasBadge;
         
         if(expiry) {
             badgeState.expiryDate = new Date(expiry);
@@ -66,7 +65,6 @@
         const freeReceived = localStorage.getItem(CONFIG.STORAGE_KEYS.FREE_BADGE_RECEIVED);
         
         if(!freeReceived) {
-            // Birinchi marta kirgan foydalanuvchi
             const expiryDate = new Date();
             expiryDate.setDate(expiryDate.getDate() + CONFIG.FREE_TRIAL_DAYS);
             
@@ -79,16 +77,12 @@
             saveBadgeState();
             updateBadgeDisplay();
             
-            // Bildirishnoma ko'rsatish
             if(window.showToast) {
                 window.showToast(`🎉 Tabriklaymiz! Sizga 1 oylik bepul NOVA galichka berildi!`);
-            } else {
-                alert("🎉 Tabriklaymiz! Sizga 1 oylik bepul NOVA galichka berildi!");
             }
             
             return true;
         }
-        
         return false;
     }
     
@@ -101,7 +95,6 @@
             return false;
         }
         
-        // To'lov modalini ochish
         showPaymentModal();
         return true;
     }
@@ -151,10 +144,7 @@
                 else alert("❌ Kontakt kiriting!");
                 return;
             }
-            
             modal.style.display = 'none';
-            
-            // Tasdiqlash modalini ko'rsatish
             showVerifyModal();
         };
         
@@ -206,7 +196,6 @@
         modal.style.display = 'flex';
     }
     
-    // ===== 1 OYLIK GALICHKA AKTIVATSIYA =====
     function activateBadgeForOneMonth() {
         const expiryDate = new Date();
         expiryDate.setDate(expiryDate.getDate() + 30);
@@ -224,29 +213,114 @@
         }
     }
     
-    // ===== BADGE DISPLAY (QIZIL DOIRA ICHIDA NOVA) =====
+    // ===== O'NG TOMONDA GALICHKA KARTASINI YARATISH =====
+    function createBadgeCard() {
+        const rightPanel = document.querySelector('.right-panel');
+        if(!rightPanel) return;
+        
+        // Badge kartasini yaratish
+        const badgeCard = document.createElement('div');
+        badgeCard.id = 'novaBadgeCard';
+        badgeCard.className = 'badge-card';
+        badgeCard.style.cssText = `
+            background: linear-gradient(135deg, #1a0000, #0a0a0a);
+            border: 1px solid #ff0000;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        `;
+        
+        badgeCard.innerHTML = `
+            <div class="badge-header" style="margin-bottom: 15px;">
+                <i class="fas fa-crown" style="color: #ffd700; font-size: 24px;"></i>
+                <h3 style="display: inline-block; margin-left: 8px;">NOVA Galichka</h3>
+            </div>
+            <div class="badge-preview" style="margin: 15px 0;">
+                <div class="nova-badge-animation" style="width: 70px; height: 70px; background: #ff0000; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; animation: badgePulse 1.5s infinite">
+                    <span style="font-size: 24px; color: #fff; font-weight: bold;">NOVA</span>
+                </div>
+            </div>
+            <div class="badge-status-info" style="margin: 10px 0;">
+                <div class="badge-price" style="font-size: 18px; font-weight: bold; color: #ffd700;">1$ / oy</div>
+                <div class="badge-days-left" id="badgeDaysLeft" style="font-size: 12px; color: #888; margin-top: 5px;"></div>
+            </div>
+            <button id="buyBadgeFromCard" class="btn" style="background: linear-gradient(135deg, #ff0000, #cc0000); margin-top: 10px; width: 100%;">
+                <i class="fas fa-crown"></i> Sotib olish
+            </button>
+            <div class="badge-features" style="margin-top: 15px; font-size: 11px; color: #666; text-align: left;">
+                <div>✅ Animatsiyali galichka</div>
+                <div>✅ Profil yonida ko'rinadi</div>
+                <div>✅ Eksklyuziv status</div>
+            </div>
+        `;
+        
+        // Eski badge card ni o'chirish (agar mavjud bo'lsa)
+        const oldBadgeCard = document.getElementById('novaBadgeCard');
+        if(oldBadgeCard) oldBadgeCard.remove();
+        
+        // Yangi kartani qo'shish (birinchi o'ringa)
+        const firstChild = rightPanel.firstChild;
+        if(firstChild) {
+            rightPanel.insertBefore(badgeCard, firstChild);
+        } else {
+            rightPanel.appendChild(badgeCard);
+        }
+        
+        // Tugma event listener
+        const buyBtn = document.getElementById('buyBadgeFromCard');
+        if(buyBtn) {
+            buyBtn.onclick = (e) => {
+                e.stopPropagation();
+                purchaseBadge();
+            };
+        }
+        
+        // Karta ustiga bosish
+        badgeCard.onclick = () => {
+            purchaseBadge();
+        };
+        
+        return badgeCard;
+    }
+    
+    // ===== BADGE DISPLAY YANGILASH =====
     function updateBadgeDisplay() {
-        // Sidebardagi galichka tugmasini yangilash
-        const badgeBtn = document.getElementById('novaBadgeBtn');
-        if(badgeBtn) {
+        // O'ng tomondagi badge kartasini yangilash
+        const daysLeftSpan = document.getElementById('badgeDaysLeft');
+        const badgeCard = document.getElementById('novaBadgeCard');
+        
+        if(daysLeftSpan) {
             if(badgeState.hasBadge && badgeState.daysLeft > 0) {
-                badgeBtn.style.opacity = '1';
-                const statusSpan = badgeBtn.querySelector('.badge-status');
-                if(statusSpan) {
-                    statusSpan.textContent = `${badgeState.daysLeft} kun qoldi`;
-                    statusSpan.style.display = 'inline-block';
-                }
+                daysLeftSpan.innerHTML = `✅ Aktiv | ${badgeState.daysLeft} kun qoldi`;
+                daysLeftSpan.style.color = '#00cc00';
+            } else if(badgeState.hasBadge && badgeState.isFreeTrial) {
+                daysLeftSpan.innerHTML = `🎁 Bepul sinov | ${badgeState.daysLeft} kun qoldi`;
+                daysLeftSpan.style.color = '#ffd700';
             } else {
-                const statusSpan = badgeBtn.querySelector('.badge-status');
-                if(statusSpan) statusSpan.style.display = 'none';
+                daysLeftSpan.innerHTML = `⭕ Aktiv emas | 1$/oy`;
+                daysLeftSpan.style.color = '#ff0000';
             }
         }
         
-        // Profil rasmi yonida galichka indikatori
+        if(badgeCard) {
+            if(badgeState.hasBadge && badgeState.daysLeft > 0) {
+                badgeCard.style.borderColor = '#00cc00';
+                badgeCard.style.boxShadow = '0 0 10px rgba(0,204,0,0.3)';
+            } else {
+                badgeCard.style.borderColor = '#ff0000';
+                badgeCard.style.boxShadow = 'none';
+            }
+        }
+        
+        // Profil yonida galichka indikatori (o'ng tomonda ko'rinadi)
         let badgeIndicator = document.getElementById('userBadgeIndicator');
-        if(!badgeIndicator && badgeState.hasBadge) {
-            const profileAvatar = document.querySelector('.creator-avatar');
-            if(profileAvatar) {
+        const creatorAvatar = document.querySelector('.creator-avatar');
+        
+        if(badgeState.hasBadge && badgeState.daysLeft > 0) {
+            if(!badgeIndicator && creatorAvatar) {
                 badgeIndicator = document.createElement('div');
                 badgeIndicator.id = 'userBadgeIndicator';
                 badgeIndicator.className = 'user-badge-indicator';
@@ -267,37 +341,13 @@
                     animation: badgePulse 1.5s infinite;
                 `;
                 badgeIndicator.innerHTML = 'N';
-                profileAvatar.style.position = 'relative';
-                profileAvatar.appendChild(badgeIndicator);
+                creatorAvatar.style.position = 'relative';
+                creatorAvatar.appendChild(badgeIndicator);
+            } else if(badgeIndicator) {
+                badgeIndicator.style.display = 'flex';
             }
-        } else if(badgeIndicator && !badgeState.hasBadge) {
-            badgeIndicator.remove();
-        }
-    }
-    
-    // ===== SIDEBARGA GALICHKA TUGMASINI QO'SHISH =====
-    function addBadgeButtonToSidebar() {
-        const sidebarFooter = document.querySelector('.sidebar-footer');
-        if(sidebarFooter && !document.getElementById('novaBadgeBtn')) {
-            const badgeBtn = document.createElement('button');
-            badgeBtn.id = 'novaBadgeBtn';
-            badgeBtn.className = 'btn';
-            badgeBtn.innerHTML = `
-                <div style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%">
-                    <div style="width:32px;height:32px;background:#ff0000;border-radius:50%;display:flex;align-items:center;justify-content:center;animation:badgePulse 2s infinite">
-                        <span style="color:#fff;font-weight:bold;font-size:14px">N</span>
-                    </div>
-                    <span>NOVA galichka</span>
-                    <span class="badge-status" style="font-size:10px;background:#ffd700;color:#000;padding:2px 6px;border-radius:20px;display:none"></span>
-                </div>
-            `;
-            badgeBtn.onclick = () => purchaseBadge();
-            
-            // Agar oldingi tugmalar bo'lsa, ularni olib tashlash
-            const oldBadgeBtn = document.getElementById('badgeBtn');
-            if(oldBadgeBtn) oldBadgeBtn.remove();
-            
-            sidebarFooter.insertBefore(badgeBtn, sidebarFooter.firstChild);
+        } else if(badgeIndicator) {
+            badgeIndicator.style.display = 'none';
         }
     }
     
@@ -319,20 +369,28 @@
             .user-badge-indicator {
                 animation: badgePulse 1.5s infinite;
             }
-            #novaBadgeBtn {
-                background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
-                border: 1px solid #ff0000;
-                margin-bottom: 10px;
+            .nova-badge-animation {
+                animation: badgePulse 1.5s infinite;
+                transition: all 0.3s ease;
             }
-            #novaBadgeBtn:hover {
-                transform: scale(1.02);
-                border-color: #ff4444;
+            .nova-badge-animation:hover {
+                transform: scale(1.1);
+            }
+            #novaBadgeCard {
+                transition: all 0.3s ease;
+            }
+            #novaBadgeCard:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 25px rgba(255,0,0,0.2);
+            }
+            .badge-features div {
+                margin: 5px 0;
             }
         `;
         document.head.appendChild(style);
     }
     
-    // ===== GALICHKA HOLATINI TEKSHIRISH (BAJARILGAN POSTLAR UCHUN) =====
+    // ===== GALICHKA HOLATINI TEKSHIRISH =====
     window.hasActiveBadge = function() {
         loadBadgeState();
         return badgeState.hasBadge && badgeState.daysLeft > 0;
@@ -343,14 +401,36 @@
         return badgeState.daysLeft;
     };
     
+    // ===== MUTATION OBSERVER (RIGHT PANEL HAZIR BO'LGACHA KUTISH) =====
+    function waitForRightPanel() {
+        const observer = new MutationObserver((mutations, obs) => {
+            const rightPanel = document.querySelector('.right-panel');
+            if(rightPanel) {
+                obs.disconnect();
+                createBadgeCard();
+                loadBadgeState();
+                updateBadgeDisplay();
+            }
+        });
+        
+        observer.observe(document.body, { childList: true, subtree: true });
+        
+        // Agar allaqachon mavjud bo'lsa
+        if(document.querySelector('.right-panel')) {
+            observer.disconnect();
+            createBadgeCard();
+            loadBadgeState();
+            updateBadgeDisplay();
+        }
+    }
+    
     // ===== INIT =====
     function init() {
         addBadgeStyles();
-        addBadgeButtonToSidebar();
+        waitForRightPanel();
         giveFreeBadgeToNewUser();
-        loadBadgeState();
         
-        console.log("✅ Galichka tizimi tayyor!");
+        console.log("✅ Galichka tizimi tayyor! (O'ng tomonda)");
         console.log(`📌 Galichka holati: ${badgeState.hasBadge ? `Aktiv (${badgeState.daysLeft} kun qoldi)` : 'Aktiv emas'}`);
     }
     
