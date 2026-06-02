@@ -1,0 +1,259 @@
+/* ============================================ */
+/* NOVA - RESPONSIVE.CSS (Mobil moslashuv)     */
+/* ============================================ */
+
+/* Large screens (1200px and below) */
+@media (max-width: 1200px) {
+    :root {
+        --right-panel-width: 300px;
+    }
+}
+
+/* Medium screens (992px and below) */
+@media (max-width: 992px) {
+    .right-panel {
+        display: none;
+    }
+    .main {
+        margin-right: 0;
+    }
+}
+
+/* Tablet screens (768px and below) */
+@media (max-width: 768px) {
+    /* Sidebar */
+    .sidebar {
+        transform: translateX(-100%);
+        position: fixed;
+        width: 260px;
+        z-index: 2000;
+    }
+    .sidebar.open {
+        transform: translateX(0);
+    }
+    .menu-btn {
+        display: block;
+    }
+    
+    /* Main Content */
+    .main {
+        margin-left: 0;
+        padding: 0 15px;
+    }
+    
+    /* Search Bar */
+    .search {
+        width: 180px;
+    }
+    .search input {
+        width: 120px;
+    }
+    
+    /* Top Icons */
+    .top-icons {
+        gap: 12px;
+    }
+    
+    /* Stories */
+    .stories {
+        gap: 10px;
+    }
+    .story {
+        min-width: 60px;
+    }
+    .story-ring {
+        width: 55px;
+        height: 55px;
+    }
+    .story-img {
+        width: 50px;
+        height: 50px;
+    }
+    
+    /* Posts */
+    .post-actions {
+        gap: 12px;
+    }
+    .action-btn {
+        font-size: 16px;
+    }
+    .action-btn span {
+        font-size: 11px;
+    }
+    .post-video {
+        max-height: 350px;
+    }
+    
+    /* Profile Stats */
+    .creator-stats {
+        gap: 10px;
+    }
+    .stat-number {
+        font-size: 14px;
+    }
+    
+    /* Toast */
+    .toast {
+        white-space: normal;
+        text-align: center;
+        max-width: 90%;
+        font-size: 12px;
+    }
+    
+    /* Modal */
+    .modal-content {
+        width: 95%;
+        max-height: 90vh;
+    }
+}
+
+/* Mobile screens (480px and below) */
+@media (max-width: 480px) {
+    /* Top Bar */
+    .top-bar {
+        padding: 10px 0;
+    }
+    .search {
+        width: 150px;
+        padding: 6px 12px;
+    }
+    .top-icons i {
+        font-size: 16px;
+    }
+    
+    /* Stories */
+    .story {
+        min-width: 55px;
+    }
+    .story-ring {
+        width: 50px;
+        height: 50px;
+    }
+    .story-img {
+        width: 45px;
+        height: 45px;
+    }
+    .story-name {
+        font-size: 9px;
+    }
+    
+    /* Posts */
+    .post-header {
+        padding: 8px 12px;
+    }
+    .post-avatar {
+        width: 32px;
+        height: 32px;
+    }
+    .post-name {
+        font-size: 12px;
+    }
+    .post-actions {
+        justify-content: space-around;
+        gap: 8px;
+    }
+    .action-btn {
+        font-size: 14px;
+    }
+    .post-caption {
+        font-size: 11px;
+        padding: 8px 12px;
+    }
+    
+    /* Creator */
+    .creator {
+        padding: 15px;
+    }
+    .creator-avatar {
+        width: 65px;
+        height: 65px;
+    }
+    .creator-name {
+        font-size: 14px;
+    }
+    .creator-stats {
+        gap: 8px;
+    }
+    .stat-number {
+        font-size: 12px;
+    }
+    .stat-label {
+        font-size: 8px;
+    }
+    
+    /* Modal */
+    .modal-header h3 {
+        font-size: 14px;
+    }
+    .modal-body {
+        padding: 15px;
+    }
+    .form-input {
+        font-size: 12px;
+        padding: 8px;
+    }
+    
+    /* Settings */
+    .setting-item {
+        font-size: 12px;
+    }
+    .setting-item select,
+    .setting-item input {
+        padding: 4px 8px;
+        font-size: 11px;
+    }
+}
+
+/* Landscape orientation for mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .sidebar {
+        height: 100%;
+    }
+    .post-video {
+        max-height: 250px;
+    }
+    .reel-video {
+        object-fit: cover;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-dark: #000000;
+        --bg-card: #0a0a0a;
+        --text-white: #ffffff;
+    }
+}
+
+/* Light mode (when darkMode is off) */
+body.light-mode {
+    --bg-dark: #ffffff;
+    --bg-card: #f5f5f5;
+    --bg-sidebar: #ffffff;
+    --text-white: #000000;
+    --text-gray: #666666;
+    --text-dark: #999999;
+    --bg-hover: #e0e0e0;
+    --primary-border: rgba(0, 0, 0, 0.1);
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    :root {
+        --primary: #ff0000;
+        --primary-dark: #cc0000;
+    }
+    .btn, .post, .sidebar {
+        border-width: 2px;
+    }
+}
+
+/* Reduced motion (accessibility) */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
