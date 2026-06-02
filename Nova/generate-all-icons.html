@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>NOVA Icon Generator</title>
+<style>body{background:#000;color:#fff;font-family:Arial;text-align:center;padding:40px}button{background:#ff0000;color:#fff;border:none;padding:12px 24px;border-radius:30px;cursor:pointer}</style>
+</head>
+<body>
+<h1>🎨 NOVA Icon Generator</h1>
+<button id="downloadAll">📦 Yuklab olish</button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+const sizes=[72,96,128,144,152,192,256,384,512];
+function drawIcon(s){
+    const c=document.createElement('canvas');c.width=s;c.height=s;
+    const ctx=c.getContext('2d');
+    const grad=ctx.createLinearGradient(0,0,s,s);
+    grad.addColorStop(0,'#ff0000');grad.addColorStop(1,'#cc0000');
+    ctx.fillStyle=grad;ctx.fillRect(0,0,s,s);
+    ctx.fillStyle='#fff';ctx.font=`bold ${s*0.44}px Arial`;
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('N',s/2,s/2);
+    if(s>=128){ctx.font=`${s*0.11}px Arial`;ctx.fillText('NOVA',s/2,s*0.85);}
+    return c;
+}
+document.getElementById('downloadAll').onclick=()=>{
+    const zip=new JSZip();
+    sizes.forEach(s=>{const canvas=drawIcon(s);const dataURL=canvas.toDataURL('image/png');zip.file(`icon-${s}.png`,dataURL.split(',')[1],{base64:true});});
+    zip.generateAsync({type:'blob'}).then(c=>{const a=document.createElement('a');a.download='nova-icons.zip';a.href=URL.createObjectURL(c);a.click();alert('✅ Yuklab olindi! assets/icons/ papkasiga oching');});
+};
+</script>
+</body>
+</html>
