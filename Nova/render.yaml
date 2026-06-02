@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: nova
+    runtime: static
+    publishDirectory: ./
+    buildCommand: ""
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
