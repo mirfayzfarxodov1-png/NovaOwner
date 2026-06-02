@@ -1,0 +1,32 @@
+// notification.mp3 yaratish uchun (brauzer konsolida ishlating)
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+const duration = 0.5;
+const sampleRate = 44100;
+const samples = duration * sampleRate;
+const buffer = audioContext.createBuffer(1, samples, sampleRate);
+const data = buffer.getChannelData(0);
+
+// "beep" tovushi yaratish
+for (let i = 0; i < samples; i++) {
+    const t = i / sampleRate;
+    data[i] = Math.sin(2 * Math.PI * 880 * t) * Math.exp(-5 * t);
+}
+
+// WAV faylga o'girish
+const wav = audioBufferToWav(buffer);
+const blob = new Blob([wav], { type: 'audio/wav' });
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url;
+a.download = 'notification.wav';
+a.click();
+
+function audioBufferToWav(buffer) {
+    const numChannels = buffer.numberOfChannels;
+    const sampleRate = buffer.sampleRate;
+    const format = 1;
+    const bitDepth = 16;
+    let result = new DataView(new ArrayBuffer(44));
+    // ... WAV header
+    return new Uint8Array(result.buffer);
+}
